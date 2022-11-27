@@ -2002,6 +2002,8 @@ console.log(audi.price); // 49000
 // Javascript Editor:
 // FINISH
 /*
+'use strict';
+
 class Car {
   // Change code below this line
 
@@ -2018,11 +2020,15 @@ class Car {
   }
 
   set price(newPrice) {
-  if (newPrice < MAX_PRICE)
-    {this.#price = newPrice;}
+    if (newPrice < this.constructor.MAX_PRICE) {
+      // (newPrice < this.constructor.MAX_PRICE) OR (newPrice < Car.MAX_PRICE)
+      this.#price = newPrice;
+    }
   }
   // Change code above this line
 }
+
+console.log(`Car max price: ${Car.MAX_PRICE}`);
 
 const audi = new Car({ price: 35000 });
 console.log(audi.price); // 35000
@@ -2039,7 +2045,22 @@ console.log(
 
 // RESULT
 /*
+Done
 
+Assignment 16/20
+The class `Car` is declared
+The class `Car` has a static property `MAX_PRICE
+The value of the static property `MAX_PRICE` is the number `50000`
+The instance has no `MAX_PRICE` property
+The `price` getter is declared in the `Car` class
+The `price` setter is declared in the `Car` class
+Calling the `price` setter on an instance of the class, with an argument value less than the value of `MAX_PRICE`, changes the property `#price`
+Calling the `price` setter on an instance of the class, with an argument value greater than the value of `MAX_PRICE`, does not change the property `#price`
+
+Result of code execution:
+35000
+49000
+49000
 */
 
 ///////////////////////////////////////////////
@@ -2047,30 +2068,589 @@ console.log(
 
 /*
 ** THEORY
+In a class, you can declare not only the methods of the future instance, but also methods available only to the class - static methods that can be both public and private. The declaration syntax is similar to static properties, except that the value is a method.
 
+class User {
+  static #takenEmails = [];
+
+  static isEmailTaken(email) {
+    return User.#takenEmails.includes(email);
+  }
+
+  #email;
+
+  constructor({ email }) {
+    this.#email = email;
+    User.#takenEmails.push(email);
+  }
+}
+
+const mango = new User({ email: "mango@mail.com" });
+
+console.log(User.isEmailTaken("poly@mail.com"));
+console.log(User.isEmailTaken("mango@mail.com"));
+The peculiarity of static methods is that when they are called, the this keyword refers to the class itself. This means that a static method can access static properties of a class, but not instance properties. It is logical, because static methods are called by the class itself, not its instances.
 
 ** TASK
+Add a public static method checkPrice(price) that accepts the price of the car in the Car class. The method should compare the values ​​of the price parameter and the private static property MAX_PRICE.
 
+If the price of the car exceeds the maximum, the method should return the string "Error! Price exceeds the maximum".
+Otherwise, the method must return the string "Success! Price is within acceptable limits".
+Below the class declaration, we have added instance initialization and method calls to show how the checkPrice(price) method will be used.
 
 ** Test
-
+The class Car is declared
+The Car class has a static method checkPrice(price)
+Calling Car.checkPrice(36000) returns the string "Success! Price is within acceptable limits"
+Calling Car.checkPrice(18000) returns the string "Success! Price is within acceptable limits"
+Calling Car.checkPrice (64000) returns the string "Error! Price exceeds the maximum"
+Calling Car.checkPrice(57000) returns the string "Error! Price exceeds the maximum"
 
  */
 
 // Javascript Editor:
 // START
 /*
+class Car {
+  static #MAX_PRICE = 50000;
+  // Change code below this line
+
+  // Change code above this line
+  constructor({ price }) {
+    this.price = price;
+  }
+}
+
+const audi = new Car({ price: 36000 });
+const bmw = new Car({ price: 64000 });
+
+console.log(Car.checkPrice(audi.price)); // "Success! Price is within acceptable limits"
+console.log(Car.checkPrice(bmw.price)); // "Error! Price exceeds the maximum"
+
 
 */
 
 // Javascript Editor:
 // FINISH
 /*
+'use strict';
+
+class Car {
+  static #MAX_PRICE = 50000;
+  // Change code below this line
+  static checkPrice(price) {
+    if (price > Car.#MAX_PRICE) {
+      return 'Error! Price exceeds the maximum';
+    }
+    return 'Success! Price is within acceptable limits';
+  }
+  // Change code above this line
+  constructor({ price }) {
+    this.price = price;
+  }
+}
+
+Car.checkPrice(36000); // returns the string "Success! Price is within acceptable limits"
+
+const audi = new Car({ price: 36000 });
+const bmw = new Car({ price: 64000 });
+
+console.log(Car.checkPrice(audi.price)); // "Success! Price is within acceptable limits"
+console.log(Car.checkPrice(bmw.price)); // "Error! Price exceeds the maximum"
+
+
+Car.checkPrice(36000); // returns the string "Success! Price is within acceptable limits"
+Car.checkPrice(18000); // returns the string "Success! Price is within acceptable limits"
+Car.checkPrice(64000); // returns the string "Error! Price exceeds the maximum"
+Car.checkPrice(57000); // returns the string "Error! Price exceeds the maximum"
+
+console.log(Car.checkPrice(36000)); // returns the string "Success! Price is within acceptable limits"
+console.log(Car.checkPrice(18000)); // returns the string "Success! Price is within acceptable limits"
+console.log(Car.checkPrice(64000)); // returns the string "Error! Price exceeds the maximum"
+console.log(Car.checkPrice(57000)); // returns the string "Error! Price exceeds the maximum"
 
 console.log(
 */
 
 // RESULT
 /*
+Done
 
+Assignment 17/20
+The class `Car` is declared
+The `Car` class has a static method `checkPrice(price)`
+Calling `Car.checkPrice(36000)` returns the string `'Success! Price is within acceptable limits'
+Calling `Car.checkPrice(18000)` returns the string `'Success! Price is within acceptable limits'
+Calling `Car.checkPrice(64000)` returns the string `'Error! Price exceeds the maximum'
+Calling `Car.checkPrice(57000)` returns the string `'Error! Price exceeds the maximum'
+
+Result of code execution:
+Success! Price is within acceptable limits
+Error! Price exceeds the maximum
+*/
+
+///////////////////////////////////////////////
+// JS V2 block-5 Autochecking  ASSIGNMENT 18/20  Status: Done
+
+/*
+** THEORY
+The extends keyword allows you to implement class inheritance, when one class (child, derived) inherits the properties and methods of another class (parent).
+
+class Child extends Parent {
+  // ...
+}
+In the expression class Child extends Parent, the child class Child inherits (extends) from the parent class Parent. This means that we can declare a base class that stores common characteristics and methods for a group of derived classes, which inherit the properties and methods of the parent, but also add their own unique ones.
+
+For example, the application has users of different roles - administrator, article writer, content manager, etc. Each type of user has a set of common characteristics, such as mail and password, but also some unique ones.
+
+Having made independent classes for each user type, we will get duplication of common properties and methods, and if it is necessary to change, for example, the name of a property, we will have to go through all the classes, this is inconvenient and laborious.
+
+Instead, you can make a general class User, which will store a set of common properties and methods, and then make classes for each user type that inherit this set from the class User. If it is necessary to change something general, it will be enough to change only the code of the User class.
+
+class User {
+  constructor(email) {
+    this.email = email;
+  }
+
+  get email() {
+    return this.email;
+  }
+
+  set email(newEmail) {
+    this.email = newEmail;
+  }
+}
+
+class ContentEditor extends User {
+  // Body of ContentEditor class
+}
+
+const editor = new ContentEditor("mango@mail.com");
+console.log(editor); // { email: "mango@mail.com" }
+console.log(editor.email); // "mango@mail.com"
+The ContentEditor class inherits from the User class its constructor, getter and setter email, as well as the public property of the same name. It is important to remember that private properties and methods of the parent class are not inherited by the child class.
+
+** TASK
+The application needs an administrator with the ability to add user mails to the black list.
+
+Declare the class Admin, which inherits from the class User
+Add to the class Admin a public static property AccessLevel, the value of which is the object { BASIC: "basic", SUPERUSER: "superuser" }
+
+** Test
+The class Admin is declared
+The class Admin inherits from class User
+The class Admin has a public static property AccessLevel
+Calling Admin.AccessLevel.BASIC returns the string "basic"
+Calling Admin.AccessLevel.SUPERUSER returns the string "superuser"
+
+ */
+
+// Javascript Editor:
+// START
+/*
+class User {
+  constructor(email) {
+    this.email = email;
+  }
+
+  get email() {
+    return this.email;
+  }
+
+  set email(newEmail) {
+    this.email = newEmail;
+  }
+}
+// Change code below this line
+
+*/
+
+// Javascript Editor:
+// FINISH
+/*
+'use strict';
+
+class User {
+  constructor(email) {
+    this.email = email;
+  }
+
+  get email() {
+    return this.email;
+  }
+
+  set email(newEmail) {
+    this.email = newEmail;
+  }
+}
+// Change code below this line
+
+class Admin extends User {
+  static AccessLevel = {
+    BASIC: 'basic',
+    SUPERUSER: 'superuser',
+  };
+}
+
+Admin.AccessLevel.BASIC; // returns the string "basic"
+Admin.AccessLevel.SUPERUSER; // returns the string "superuser"
+
+console.log(Admin.AccessLevel.BASIC); // returns the string "basic"
+console.log(Admin.AccessLevel.SUPERUSER); // returns the string "superuser"
+
+console.log(
+*/
+
+// RESULT
+/*
+Done
+
+Assignment 18/20
+The class `Admin` is declared
+The class `Admin` inherits from class `User`
+The class `Admin` has a public static property `AccessLevel`
+Calling `Admin.AccessLevel.BASIC` returns the string 'basic'
+Calling `Admin.AccessLevel.SUPERUSER` returns the string 'superuser'
+
+Result of code execution:
+basic
+superuser
+*/
+
+///////////////////////////////////////////////
+// JS V2 block-5 Autochecking  ASSIGNMENT 19/20  Status: Done
+
+/*
+** THEORY
+First of all, in the constructor of the child class, you need to call the special function super(arguments) - this is an alias for the constructor of the parent class. Otherwise, when trying to access this in the constructor of a child class, an error will be generated. When calling the constructor of the parent class, we pass the required arguments to initialize the properties.
+
+class User {
+  constructor(email) {
+    this.email = email;
+  }
+
+  get email() {
+    return this.email;
+  }
+
+  set email(newEmail) {
+    this.email = newEmail;
+  }
+}
+
+class ContentEditor extends User {
+  constructor({ email, posts }) {
+    // Call the constructor of the parent User class
+    super(email);
+    this.posts = posts;
+  }
+}
+
+const editor = new ContentEditor({ email: "mango@mail.com", posts: [] });
+console.log(editor); // { email: 'mango@mail.com', posts: [] }
+console.log(editor.email); // 'mango@mail.com'
+
+** TASK
+Add to the class Admin a method constructor, which takes one parameter - a settings object with two properties email and accessLevel. Add to the class Admin a public property accessLevel, the value of which will be passed when the constructor is called.
+
+To show how the Admin class will be used we have added instance initialization below the class declaration.
+
+** Test
+The class Admin is declared
+The class Admin inherits from class User
+The class Admin has a public static property AccessLevel
+The Admin class has a constructor method with a parameter in the form of an object {email, accessLevel}
+The class Admin in the constructor for the property email is used to refer to the constructor of the parent class
+Calling Admin.AccessLevel.BASIC returns the string "basic"
+Calling Admin.AccessLevel.SUPERUSER returns the string "superuser"
+
+ */
+
+// Javascript Editor:
+// START
+/*
+class User {
+  email;
+
+  constructor(email) {
+    this.email = email;
+  }
+
+  get email() {
+    return this.email;
+  }
+
+  set email(newEmail) {
+    this.email = newEmail;
+  }
+}
+
+class Admin extends User {
+  // Change code below this line
+
+  static AccessLevel = {
+    BASIC: "basic",
+    SUPERUSER: "superuser",
+  };
+
+  // Change code above this line
+}
+
+const mango = new Admin({
+  email: "mango@mail.com",
+  accessLevel: Admin.AccessLevel.SUPERUSER,
+});
+
+console.log(mango.email); // "mango@mail.com"
+console.log(mango.accessLevel); // "superuser"
+
+*/
+
+// Javascript Editor:
+// FINISH
+/*
+class User {
+  email;
+
+  constructor(email) {
+    this.email = email;
+  }
+
+  get email() {
+    return this.email;
+  }
+
+  set email(newEmail) {
+    this.email = newEmail;
+  }
+}
+
+class Admin extends User {
+  // Change code below this line
+
+  static AccessLevel = {
+    BASIC: "basic",
+    SUPERUSER: "superuser",
+  };
+  constructor({ email, accessLevel }) {
+    super(email);
+    this.accessLevel = Admin.AccessLevel;
+  }
+  
+  // Change code above this line
+}
+
+const mango = new Admin({
+  email: "mango@mail.com",
+  accessLevel: Admin.AccessLevel.SUPERUSER,
+});
+
+console.log(mango.email); // "mango@mail.com"
+console.log(mango.accessLevel); // "superuser"
+
+console.log(Admin.AccessLevel.SUPERUSER);
+console.log(Admin.AccessLevel.BASIC);
+
+
+console.log(
+*/
+
+// RESULT
+/*
+Done
+
+Assignment 19/20
+The class `Admin` is declared
+The class `Admin` inherits from class `User`
+The class `Admin` has a public static property `AccessLevel`
+The `Admin` class has a `constructor` method with a parameter in the form of an object `{email, accessLevel}`
+The class `Admin` in the constructor for the property `email` is used to refer to the constructor of the parent class
+Calling `Admin.AccessLevel.BASIC` returns the string 'basic'
+Calling `Admin.AccessLevel.SUPERUSER` returns the string 'superuser'
+
+Result of code execution:
+mango@mail.com
+{ BASIC: 'basic', SUPERUSER: 'superuser' }
+superuser
+basic
+*/
+
+///////////////////////////////////////////////
+// JS V2 block-5 Autochecking  ASSIGNMENT 20/20  Status: Done
+
+/*
+** THEORY
+Assignment 20/20
+In a child class, you can declare methods that will only be available to its instances.
+
+// Let's imagine that there is a declaration of the User class above
+
+class ContentEditor extends User {
+  constructor({ email, posts }) {
+    super(email);
+    this.posts = posts;
+  }
+
+  addPost(post) {
+    this.posts.push(post);
+  }
+}
+
+const editor = new ContentEditor({ email: "mango@mail.com", posts: [] });
+console.log(editor); // { email: 'mango@mail.com', posts: [] }
+console.log(editor.email); // 'mango@mail.com'
+editor.addPost("post-1");
+console.log(editor.posts); // ['post-1']
+
+** TASK
+Add the following properties and methods to the Admin class.
+
+The public property blacklistedEmails for storing the blacklisted email addresses of users. The default is an empty array.
+Public method blacklist(email) for adding email to the blacklist. The method should add the value of the email parameter to the array stored in the blacklistedEmails property.
+The public method isBlacklisted (email) for checking blacklisted mail. The method should check for the presence of the email parameter value in the array stored in the blacklistedEmails property and return true or false.
+After declaring the class, we added instance initialization and method calls in the order in which your code will validate the tests. Please don't change anything there.
+
+** Test
+The class Admin is declared
+The class Admin inherits from class User
+The class Admin has a public property blacklistedEmails
+The class Admin has a public method blacklist
+The class Admin has a public method isBlacklisted
+After calling mango.blacklist("poly@mail.com") the value of the blacklistedEmails property is the array ["poly@mail.com"]
+Calling mango.isBlacklisted("mango@mail.com") returns false
+Calling mango.isBlacklisted("poly@mail.com") returns true
+
+ */
+
+// Javascript Editor:
+// START
+/*
+class User {
+  email;
+
+  constructor(email) {
+    this.email = email;
+  }
+
+  get email() {
+    return this.email;
+  }
+
+  set email(newEmail) {
+    this.email = newEmail;
+  }
+}
+class Admin extends User {
+  // Change code below this line
+
+  static AccessLevel = {
+    BASIC: "basic",
+    SUPERUSER: "superuser",
+  };
+
+  constructor({ email, accessLevel }) {
+    super(email);
+    this.accessLevel = accessLevel;
+  }
+
+  // Change code above this line
+}
+
+const mango = new Admin({
+  email: "mango@mail.com",
+  accessLevel: Admin.AccessLevel.SUPERUSER,
+});
+
+console.log(mango.email); // "mango@mail.com"
+console.log(mango.accessLevel); // "superuser"
+
+mango.blacklist("poly@mail.com");
+console.log(mango.blacklistedEmails); // ["poly@mail.com"]
+console.log(mango.isBlacklisted("mango@mail.com")); // false
+console.log(mango.isBlacklisted("poly@mail.com")); // true
+
+*/
+
+// Javascript Editor:
+// FINISH
+/*
+'use strict';
+
+class User {
+  email;
+
+  constructor(email) {
+    this.email = email;
+  }
+
+  get email() {
+    return this.email;
+  }
+
+  set email(newEmail) {
+    this.email = newEmail;
+  }
+}
+class Admin extends User {
+  // Change code below this line
+
+  static AccessLevel = {
+    BASIC: 'basic',
+    SUPERUSER: 'superuser',
+  };
+
+  blacklistedEmails = [];
+
+  constructor({ email, accessLevel }) {
+    super(email);
+    this.accessLevel = accessLevel;
+  }
+
+  blacklist(email) {
+    this.blacklistedEmails.push(email);
+  }
+
+  isBlacklisted(email) {
+    return this.blacklistedEmails.includes(email);
+  }
+
+  // Change code above this line
+}
+
+const mango = new Admin({
+  email: 'mango@mail.com',
+  accessLevel: Admin.AccessLevel.SUPERUSER,
+});
+
+console.log(mango.email); // "mango@mail.com"
+console.log(mango.accessLevel); // "superuser"
+
+mango.blacklist('poly@mail.com');
+console.log(mango.blacklistedEmails); // ["poly@mail.com"]
+console.log(mango.isBlacklisted('mango@mail.com')); // false
+console.log(mango.isBlacklisted('poly@mail.com')); // true
+
+
+console.log(
+*/
+
+// RESULT
+/*
+Done
+
+Assignment 20/20
+The class `Admin` is declared
+The class `Admin` inherits from class `User`
+The class `Admin` has a public property `blacklistedEmails`
+The class `Admin` has a public property `blacklist`
+The class `Admin` has a public property `isBlacklisted`
+After calling `mango.blacklist('poly@mail.com')` the value of the `blacklistedEmails` property is the array `[ 'poly@mail.com' ]`
+Calling `mango.isBlacklisted('mango@mail.com')` returns `false`
+Calling `mango.isBlacklisted('poly@mail.com')` returns `true`
+Result of code execution:
+mango@mail.com
+superuser
+[ 'poly@mail.com' ]
+false
+true
 */
